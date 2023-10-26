@@ -17,6 +17,74 @@ spec:
           image: webdev0594/perfume-backend:1
           ports:
             - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-db-secret
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-db-secret
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-db-secret
+                  key: DB_NAME
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-db-secret
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-db-secret
+                  key: DB_PASSWORD
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-app-secret
+                  key: JWT_SECRET_KEY
+            - name: JWT_REDIRECT_URI
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-app-secret
+                  key: JWT_REDIRECT_URI
+            - name: JWT_ACCESS_TOKEN_VALIDITY_IN_SECONDS
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-app-secret
+                  key: JWT_ACCESS_TOKEN_VALIDITY_IN_SECONDS
+            - name: JWT_REFRESH_TOKEN_VALIDITY_IN_SECONDS
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-app-secret
+                  key: JWT_REFRESH_TOKEN_VALIDITY_IN_SECONDS
+            - name: AES_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-app-secret
+                  key: AES_SECRET_KEY
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-app-secret
+                  key: SENTRY_DSN
+            - name: OAUTH2_GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-app-secret
+                  key: OAUTH2_GOOGLE_CLIENT_ID
+            - name: OAUTH2_GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: perfume-app-secret
+                  key: OAUTH2_GOOGLE_CLIENT_SECRET
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
 ---
 apiVersion: v1
 kind: Service
