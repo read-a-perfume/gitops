@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perfume-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: perfume-backend
+  template:
+    metadata:
+      labels:
+        app: perfume-backend
+    spec:
+      containers:
+        - name: perfume-backend
+          image: webdev0594/perfume-backend:1
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: perfume-app-service
+spec:
+  selector:
+    app: perfume-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
