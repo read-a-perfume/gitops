@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perfume-frontend-deployment
+  namespace: perfume
+  labels:
+    app: perfume-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: perfume-frontend
+  template:
+    metadata:
+      labels:
+        app: perfume-frontend
+    spec:
+      containers:
+      - name: perfume-frontend
+        image: webdev0594/perfume-frontend:6dc13f05bb
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "200Mi"
+          limits:
+            cpu: "200m"
+            memory: "400Mi"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          timeoutSeconds: 2
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: perfume-frontend-service
+  namespace: perfume
+spec:
+  selector:
+    app: perfume-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
