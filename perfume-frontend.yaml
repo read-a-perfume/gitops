@@ -39,9 +39,6 @@ spec:
             port: 80
           initialDelaySeconds: 5
           timeoutSeconds: 2
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
 
 ---
 
