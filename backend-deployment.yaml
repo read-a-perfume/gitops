@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perfume-backend-deployment
+  namespace: perfume
+  labels:
+    app: perfume-backend
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: perfume-backend
+  template:
+    metadata:
+      labels:
+        app: perfume-backend
+    spec:
+      containers:
+      - name: perfume-backend
+        image: webdev0594/perfume-backend:482fe6c2e4
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+          requests:
+            cpu: "0.5"
+            memory: "256Mi"
+        envFrom:
+          - secretRef:
+              name: perfume-db-secret
+          - secretRef:
+              name: perfume-app-secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: perfume-backend-service
+  namespace: perfume
+spec:
+  selector:
+    app: perfume-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
