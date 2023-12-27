@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: perfume-redis
+  namespace: perfume
+spec:
+  serviceName: "perfume-redis"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: perfume-redis
+  template:
+    metadata:
+      labels:
+        app: perfume-redis
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+      - name: perfume-redis
+        image: redis:latest
+        command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+        ports:
+        - containerPort: 6379
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: perfume-redis-pv-claim
+          mountPath: /data
+        - name: config
+          mountPath: /usr/local/etc/redis
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      volumes:
+      - name: config
+        configMap:
+          name: perfume-redis-config
+          defaultMode: 493
+  volumeClaimTemplates:
+  - metadata:
+      name: perfume-redis-pv-claim
+      namespace: perfume
+    spec:
+      storageClassName: rook-ceph-block
+      accessModes: [ "ReadWriteOncePod" ]
+      resources:
+        requests:
+          storage: 5Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: perfume-redis-svc
+  namespace: perfume
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: perfume-redis
