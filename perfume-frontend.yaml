@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: perfume-frontend
-        image: webdev0594/perfume-frontend:60cb75442d
+        image: webdev0594/perfume-frontend:bcaa41b817
         ports:
         - containerPort: 80
         resources:
